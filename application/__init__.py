@@ -12,7 +12,7 @@ class TemplateTool(cherrypy.Tool):
     """jinja environment instance"""
 
     def __init__(self):
-        print(config.path)
+        # print(config.path)
         viewloader = jinja2.FileSystemLoader(os.path.join(config.path, 'application', 'view'))
         self._engine = jinja2.Environment(loader=viewloader)
 
