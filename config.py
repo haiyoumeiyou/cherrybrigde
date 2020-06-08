@@ -1,4 +1,5 @@
 import os
+import cherrypy
 
 path = os.path.abspath(os.path.dirname(__file__))
 config = {
@@ -14,5 +15,10 @@ config = {
     '/resource': {
         'tools.staticdir.on': True,
         'tools.staticdir.dir': os.path.join(path, 'public', 'resource')
+    },
+    '/': {
+        'tools.sessions.on': True,
+        'tools.sessions.storage_class': cherrypy.lib.sessions.FileSession,
+        'tools.sessions.storage_path': os.path.join(path, 'sessions')
     }
 }

@@ -1,10 +1,14 @@
-<div class='span-4 prepend-top'>
-    <h2><a href='/'>Website</a></h2>
-</div>
-<div class='span-20 prepend-top last'>
-    <ul>
-    <li><a href='/news/list'>News</a></li>
-    <li><a href='/user/profile'>Profile</a></li>
-    <li><a href='/broken'>Broken</a></li>
-    </ul>
-</div>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <a class="navbar-brand" href='/'>Website</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-top-menu" aria-controls="navbar-top-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class='collapse navbar-collapse' id="navbar-top-menu">
+        <ul class="navbar-nav mr-auto">
+            <li class="navbar-item"><a class="nav-link" href='/news/list'>News</a></li>
+            <li class="navbar-item"><a class="nav-link" href='/user/profile'>Profile</a></li>
+            <li class="navbar-item"><a class="nav-link" href='/broken'>Broken</a></li>
+            <li class="navbar-item"><a class="nav-link" href='/logout'>Logout</a></li>
+        </ul>
+    </div>
+</nav>
