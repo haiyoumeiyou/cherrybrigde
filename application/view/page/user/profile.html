@@ -1,9 +1,9 @@
 {% extends 'layout/main.html' %}
 {% block content %}
-  <div class='span-18'>
-    <table>
-      <tr><td>First name:</td><td>John</td></tr>
-      <tr><td>Last name:</td><td>Doe</td></tr>
-    <table>
-  </div>
+    <div class='span-18'>
+        <table>
+            <tr><td>Name:</td><td>{{ user.name }}</td></tr>
+            <tr><td>Email:</td><td>{{ user.preferred_username }}</td></tr>
+        <table>
+    </div>
 {% endblock %}

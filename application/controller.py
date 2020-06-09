@@ -4,7 +4,7 @@ import uuid
 import cherrypy
 
 import instance.msal_conf as msal_conf
-from .model.msalhandler import MsalHandler
+from application.model.msalhandler import MsalHandler
 
 ad = MsalHandler(msal_conf)
 
@@ -15,10 +15,11 @@ class Index:
         self.news = News()
         self.user = User()
 
+    @cherrypy.tools.access()
     @cherrypy.tools.template
     def index(self):
-        if "user" not in cherrypy.session:
-            raise cherrypy.HTTPRedirect("/login")
+        # if "user" not in cherrypy.session:
+        #     raise cherrypy.HTTPRedirect("/login")
         pass
 
     @cherrypy.expose
@@ -74,9 +75,10 @@ class Index:
 
 
 class User:
+    @cherrypy.tools.access()
     @cherrypy.tools.template
     def profile(self):
-        pass
+        return {'user': cherrypy.session['user']}
 
 
 class News:
@@ -85,10 +87,12 @@ class News:
         {'id': 1, 'date': datetime.datetime(2014, 11, 17), 'title': 'Foo', 'text': 'Ipsum lorem'}
     ]
 
+    @cherrypy.tools.access()
     @cherrypy.tools.template
     def list(self):
         return {'list': self._list}
 
+    @cherrypy.tools.access()
     @cherrypy.tools.template
     def show(self, id):
         return {'item': self._list[int(id)]}

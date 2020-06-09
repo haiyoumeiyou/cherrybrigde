@@ -56,8 +56,27 @@ class TemplateTool(cherrypy.Tool):
 
         return renderer.render(**data) if template and isinstance(data, dict) else data
 
+
+class AccessTool(cherrypy.Tool):
+    def __init__(self):
+        cherrypy.Tool.__init__(self,
+            'before_handler',
+            self.check_access,
+            priority=95
+        )
+
+    def check_access(self, defaut=False):
+        print("checking access...")
+        print("before check: ", cherrypy.session)
+        if "user" not in cherrypy.session:
+        # if not getattr(cherrypy.session, "user", defaut):
+            raise cherrypy.HTTPRedirect("/login")
+            # print("after check: ", cherrypy.session["user"])
+
+
 def bootstrap():
     cherrypy.tools.template = TemplateTool()
+    cherrypy.tools.access = AccessTool()
 
     cherrypy.config.update(config.config)
 
