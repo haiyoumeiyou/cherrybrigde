@@ -6,6 +6,10 @@ import jinja2
 
 import config
 
+from .model.sqlitehandler import SqliteHandler
+
+site_db = SqliteHandler()
+
 class TemplateTool(cherrypy.Tool):
 
     _engine = None
@@ -66,8 +70,8 @@ class AccessTool(cherrypy.Tool):
         )
 
     def check_access(self, defaut=False):
-        print("checking access...")
-        print("before check: ", cherrypy.session)
+        # print("checking access...")
+        # print("before check: ", cherrypy.session)
         if "user" not in cherrypy.session:
         # if not getattr(cherrypy.session, "user", defaut):
             raise cherrypy.HTTPRedirect("/login")

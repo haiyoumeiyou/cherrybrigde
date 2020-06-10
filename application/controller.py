@@ -5,8 +5,10 @@ import cherrypy
 
 import instance.msal_conf as msal_conf
 from application.model.msalhandler import MsalHandler
+from application.model.mssqlhandler import HrdbHandler
 
 ad = MsalHandler(msal_conf)
+hr_db = HrdbHandler('sql coon string')
 
 class Index:
     # news = None
