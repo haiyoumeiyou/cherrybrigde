@@ -16,13 +16,14 @@ class Index:
     def __init__(self):
         self.news = News()
         self.user = User()
+        self.error = Error()
 
     @cherrypy.tools.access()
     @cherrypy.tools.template
     def index(self):
         # if "user" not in cherrypy.session:
         #     raise cherrypy.HTTPRedirect("/login")
-        pass
+        return {'authmenu': cherrypy.session['authmenu']}
 
     @cherrypy.expose
     def login(self):
@@ -80,7 +81,7 @@ class User:
     @cherrypy.tools.access()
     @cherrypy.tools.template
     def profile(self):
-        return {'user': cherrypy.session['user']}
+        return {'authmenu': cherrypy.session['authmenu'], 'user': cherrypy.session['user']}
 
 
 class News:
@@ -92,12 +93,23 @@ class News:
     @cherrypy.tools.access()
     @cherrypy.tools.template
     def list(self):
-        return {'list': self._list}
+        return {'authmenu': cherrypy.session['authmenu'], 'list': self._list}
 
     @cherrypy.tools.access()
     @cherrypy.tools.template
     def show(self, id):
-        return {'item': self._list[int(id)]}
+        return {'authmenu': cherrypy.session['authmenu'], 'item': self._list[int(id)]}
+
+
+class Error:
+    @cherrypy.tools.template
+    def broken(self):
+        return {'authmenu': cherrypy.session['authmenu']}
+
+    @cherrypy.tools.template
+    def noauth(self):
+        return {'authmenu': cherrypy.session['authmenu']}
+
 
 def errorPage(status, message, **kwargs):
     return cherrypy.tools.template._engine.get_template('page/error.html').render()

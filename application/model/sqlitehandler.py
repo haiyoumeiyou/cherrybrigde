@@ -36,12 +36,13 @@ class SqliteHandler(object):
                 """
                 CREATE TABLE IF NOT EXISTS menus (
                     menu_id INTEGER PRIMARY KEY,
-                    title TEXT NOT NULL,
-                    url TEXT NOT NULL,
+                    caption TEXT NOT NULL,
+                    href TEXT NOT NULL,
                     set_grp TEXT NO NULL,
                     set_lvl INTEGER NO NULL,
                     set_order INTEGER NO NULL,
-                    parent TEXT
+                    parent INTEGER,
+                    FOREIGN KEY (parent) REFERENCES menus(menu_id)
                 )
                 """
             )
@@ -77,12 +78,12 @@ class SqliteHandler(object):
                     (1, 'Toolbox', '/', 'top_menu', 1, 1, None),
                     (2, 'News', '/news/list', 'top_menu', 1, 2, None),
                     (3, 'Profile', '/user/profile', 'top_menu', 1, 3, None),
-                    (4, 'Broken', '/broken', 'top_menu', 1, 4, None),
+                    (4, 'Broken', '/error/broken', 'top_menu', 1, 4, None),
                     (5, 'Logout', '/logout', 'top_menu', 1, 5, None)
                 ])
             )
             c.executemany(
-                'INSERT INTO roles VALUES (?,?,?)',
+                'INSERT INTO roles VALUES (?,?,?,?,?)',
                 ([
                     ('system', 'system role', True, datetime.datetime.now(),'sys'),
                     ('certificate', 'certificate role', True, datetime.datetime.now(),'sys'),
@@ -116,3 +117,30 @@ class SqliteHandler(object):
             )
             self.conn.commit()
             self.conn.close()
+
+    def _create_conn(self):
+        return sqlite3.connect(self.db_name)
+
+    def _close_conn(self, conn):
+        conn.close()
+
+    def get_top_menu(self, user:str=None):
+        conn = self._create_conn()
+        c = conn.cursor()
+
+        try:
+            c.execute(
+                """
+                SELECT m.caption, m.href 
+                FROM menus m INNER JOIN role_menu rm ON m.menu_id = rm.menu_id
+                WHERE rm.role_name = ? 
+                """,
+                ('system',)
+            )
+            we = c.fetchall()
+            return we
+        except sqlite3.Error as err:
+            return err
+
+
+    

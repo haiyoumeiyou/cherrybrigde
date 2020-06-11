@@ -69,13 +69,14 @@ class AccessTool(cherrypy.Tool):
             priority=95
         )
 
-    def check_access(self, defaut=False):
-        # print("checking access...")
-        # print("before check: ", cherrypy.session)
+    def check_access(self):
         if "user" not in cherrypy.session:
-        # if not getattr(cherrypy.session, "user", defaut):
             raise cherrypy.HTTPRedirect("/login")
-            # print("after check: ", cherrypy.session["user"])
+        auth_menu = site_db.get_top_menu()
+        auth_href = [h for c, h in auth_menu]
+        cherrypy.session['authmenu'] = auth_menu
+        if cherrypy.request.path_info not in auth_href:
+            raise cherrypy.HTTPRedirect("/error/noauth")
 
 
 def bootstrap():

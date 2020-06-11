@@ -5,10 +5,13 @@
     </button>
     <div class='collapse navbar-collapse' id="navbar-top-menu">
         <ul class="navbar-nav mr-auto">
-            <li class="navbar-item"><a class="nav-link" href='/news/list'>News</a></li>
+            <!-- <li class="navbar-item"><a class="nav-link" href='/news/list'>News</a></li>
             <li class="navbar-item"><a class="nav-link" href='/user/profile'>Profile</a></li>
             <li class="navbar-item"><a class="nav-link" href='/broken'>Broken</a></li>
-            <li class="navbar-item"><a class="nav-link" href='/logout'>Logout</a></li>
+            <li class="navbar-item"><a class="nav-link" href='/logout'>Logout</a></li> -->
+            {% for item in authmenu[1:]  %}
+                <li class="navbar-item"><a class="nav-link" href='{{ item[1] }}'>{{ item[0] }}</a></li>
+            {% endfor %}
         </ul>
     </div>
 </nav>
