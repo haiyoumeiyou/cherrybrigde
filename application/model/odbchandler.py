@@ -13,7 +13,7 @@ class DatabaseHandler(object):
     def _close_conn(self, conn):
         conn.close()
 
-    def get_selve(self, query, params=None):
+    def _get_selve(self, query, params=None):
         with self._create_conn() as conn:
             c = conn.cursor()
             if params is None:
@@ -27,7 +27,7 @@ class DatabaseHandler(object):
                 return we
             return None
 
-    def get_self(self, query, params=None):
+    def _get_self(self, query, params=None):
         with self._create_conn() as conn:
             c = conn.cursor()
             if params is None:
@@ -41,7 +41,7 @@ class DatabaseHandler(object):
                 return me
             return None
 
-    def update_self(self, query, params=None):
+    def _update_self(self, query, params=None):
         with self._create_conn() as conn:
             c = conn.cursor()
             if params is None:
