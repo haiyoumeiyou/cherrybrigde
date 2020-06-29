@@ -7,7 +7,7 @@ import instance.msal_conf as msal_conf
 from application.model.msalhandler import MsalHandler
 from application.model.mssqlhandler import HrdbHandler
 
-ad = MsalHandler(msal_conf)
+aad = MsalHandler(msal_conf)
 hr_db = HrdbHandler('sql coon string')
 
 class Index:
@@ -28,7 +28,7 @@ class Index:
     @cherrypy.expose
     def login(self):
         cherrypy.session["state"] = str(uuid.uuid4())
-        auth_url = ad._build_auth_url(
+        auth_url = aad._build_auth_url(
             scopes=msal_conf.SCOPE,
             state=cherrypy.session["state"]
         )
@@ -48,8 +48,8 @@ class Index:
             """ % str(cherrypy.request.params)
             return output
         if code:
-            cache = ad._load_cache(cherrypy.session)
-            result = ad._build_msal_app(cache=cache).acquire_token_by_authorization_code(
+            cache = aad._load_cache(cherrypy.session)
+            result = aad._build_msal_app(cache=cache).acquire_token_by_authorization_code(
                 code,
                 scopes=msal_conf.SCOPE,
                 redirect_uri=msal_conf.REDIRECT_PATH
@@ -61,7 +61,7 @@ class Index:
                 """ % str(cherrypy.request.params)
                 return output
             cherrypy.session["user"] = result.get("id_token_claims")
-            ad._save_cache(cache, cherrypy.session)
+            aad._save_cache(cache, cherrypy.session)
         raise cherrypy.HTTPRedirect("/index")
 
     @cherrypy.expose

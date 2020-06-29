@@ -6,9 +6,9 @@ import jinja2
 
 import config
 
-from .model.sqlitehandler import SqliteHandler
+from .model.sqlitehandler import SiteHandler
 
-site_db = SqliteHandler()
+site_db = SiteHandler()
 
 class TemplateTool(cherrypy.Tool):
 
@@ -72,9 +72,12 @@ class AccessTool(cherrypy.Tool):
     def check_access(self):
         if "user" not in cherrypy.session:
             raise cherrypy.HTTPRedirect("/login")
-        auth_menu = site_db.get_top_menu()
-        auth_href = [h for c, h in auth_menu]
+        site_stat, auth_menu = site_db.get_top_menu('system')
+        if not site_stat:
+            raise cherrypy.HTTPRedirect("/error/noauth")
+        auth_href = [h for c, h, g in auth_menu]
         cherrypy.session['authmenu'] = auth_menu
+        print(dir(cherrypy.request), cherrypy.request.path_info)
         if cherrypy.request.path_info not in auth_href:
             raise cherrypy.HTTPRedirect("/error/noauth")
 

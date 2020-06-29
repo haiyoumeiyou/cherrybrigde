@@ -2,6 +2,9 @@ import os
 import sqlite3
 import datetime
 
+from typing import Dict, List
+
+
 class SqliteHandler(object):
     def __init__(self, db_name:str='instance/site.sqlite'):
         self.db_name = db_name
@@ -79,7 +82,8 @@ class SqliteHandler(object):
                     (2, 'News', '/news/list', 'top_menu', 1, 2, None),
                     (3, 'Profile', '/user/profile', 'top_menu', 1, 3, None),
                     (4, 'Broken', '/error/broken', 'top_menu', 1, 4, None),
-                    (5, 'Logout', '/logout', 'top_menu', 1, 5, None)
+                    (5, 'Logout', '/logout', 'top_menu', 1, 5, None),
+                    (6, 'news-Show', '/news/show', 'end_point', 2, None, 2)
                 ])
             )
             c.executemany(
@@ -100,19 +104,23 @@ class SqliteHandler(object):
                     ('system',3,datetime.datetime.now(),'sys'),
                     ('system',4,datetime.datetime.now(),'sys'),
                     ('system',5,datetime.datetime.now(),'sys'),
+                    ('system',6,datetime.datetime.now(),'sys'),
                     ('certificate',1,datetime.datetime.now(),'sys'),
                     ('certificate',2,datetime.datetime.now(),'sys'),
                     ('certificate',3,datetime.datetime.now(),'sys'),
                     ('certificate',5,datetime.datetime.now(),'sys'),
+                    ('certificate',6,datetime.datetime.now(),'sys'),
                     ('classified',1,datetime.datetime.now(),'sys'),
                     ('classified',2,datetime.datetime.now(),'sys'),
                     ('classified',3,datetime.datetime.now(),'sys'),
                     ('classified',5,datetime.datetime.now(),'sys'),
+                    ('classified',6,datetime.datetime.now(),'sys'),
                     ('student',1,datetime.datetime.now(),'sys'),
                     ('student',3,datetime.datetime.now(),'sys'),
                     ('student',5,datetime.datetime.now(),'sys'),
                     ('guest',1,datetime.datetime.now(),'sys'),
                     ('guest',2,datetime.datetime.now(),'sys'),
+                    ('guest',6,datetime.datetime.now(),'sys'),
                 ])
             )
             self.conn.commit()
@@ -124,23 +132,66 @@ class SqliteHandler(object):
     def _close_conn(self, conn):
         conn.close()
 
-    def get_top_menu(self, user:str=None):
-        conn = self._create_conn()
-        c = conn.cursor()
+    def _get_selve(self, query, params=None):
+        with self._create_conn() as conn:
+            c = conn.cursor()
+            try:
+                if params is None:
+                    c.execute(query)
+                else:
+                    c.execute(query, params)
+                we = c.fetchall()
+                if isinstance(we, List):
+                    return True, we
+                return False, None
+            except pyodbc.Error as err:
+                return False, err
 
-        try:
-            c.execute(
-                """
-                SELECT m.caption, m.href 
-                FROM menus m INNER JOIN role_menu rm ON m.menu_id = rm.menu_id
-                WHERE rm.role_name = ? 
-                """,
-                ('system',)
-            )
-            we = c.fetchall()
-            return we
-        except sqlite3.Error as err:
-            return err
+    def _get_self(self, query, params=None):
+        with self._create_conn() as conn:
+            c = conn.cursor()
+            try:
+                if params is None:
+                    c.execute(query)
+                else:
+                    c.execute(query, params)
+                me = c.fetchone()
+                if isinstance(q_rst, tuple):
+                    return True, me
+                return False, None
+            except pyodbc.Error as err:
+                return False, err
+
+    def _update_self(self, query, params=None):
+        with self._create_conn() as conn:
+            c = conn.cursor()
+            try:
+                if params is None:
+                    c.execute(query)
+                else:
+                    c.execute(query, params)
+                conn.commit()
+                me = c.fetchone()
+                if isinstance(q_rst, tuple):
+                    return True, me
+                return False, None
+            except pyodbc.Error as err:
+                return False, err
+
+
+class SiteHandler(object):
+    def __init__(self, db_name:str='instance/site.sqlite'):
+        self.db = SqliteHandler(db_name)
+
+    def get_top_menu(self, user:str=None):
+        q_cmd = """
+            SELECT m.caption, m.href, m.set_grp  
+            FROM menus m INNER JOIN role_menu rm ON m.menu_id = rm.menu_id
+            WHERE rm.role_name = ? 
+        """
+        q_params = (user,)
+        return self.db._get_selve(q_cmd, q_params)
+
 
 
     

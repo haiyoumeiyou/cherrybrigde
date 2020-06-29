@@ -9,7 +9,7 @@
             <li class="navbar-item"><a class="nav-link" href='/user/profile'>Profile</a></li>
             <li class="navbar-item"><a class="nav-link" href='/broken'>Broken</a></li>
             <li class="navbar-item"><a class="nav-link" href='/logout'>Logout</a></li> -->
-            {% for item in authmenu[1:]  %}
+            {% for item in authmenu[1:] if item[2] == 'top_menu'  %}
                 <li class="navbar-item"><a class="nav-link" href='{{ item[1] }}'>{{ item[0] }}</a></li>
             {% endfor %}
         </ul>
