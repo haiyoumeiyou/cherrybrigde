@@ -1,0 +1,43 @@
+{% extends 'layout/main.html' %}
+<!-- {% block title %}Devices Page{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %} -->
+
+{% block content %}
+<div class="container">
+    <div class="error hidden" role="alert"></div>
+    <div class="search m-1">
+        <div>
+            <input type="radio" id="_workstations" name="searchbase" value="_Workstations" checked /> _workstations
+            <input type="radio" id="_intunePilot" name="searchbase" value="_intunePilot" /> _intunePilot
+            <input type="radio" id="Computers" name="searchbase" value="Computers" /> Computers
+        </div>
+        <label for="devicename">Search for Device:
+            <input id="devicename" type="text" />
+        </label>
+        <button class="btn btn-primary" id="search">Search</button>
+        <button class="btn btn-warning" id="cancel">Cancel</button>
+    </div>
+    <div class="devices m-1">
+        <table class="table table-dark">
+            <thead class="thead-primary">
+                <tr>
+                    <th>Device Name</th>
+                    <th>OS</th>
+                    <th>Last Login</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+{{ super() }}
+<script type="module">
+    import * as MVC from "/resource/js/devices.js";
+    window.mvc = MVC;
+</script>
+{% endblock %}

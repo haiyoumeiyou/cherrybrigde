@@ -8,6 +8,7 @@ import config
 
 from .model.sqlitehandler import SiteHandler
 
+
 site_db = SiteHandler()
 
 class TemplateTool(cherrypy.Tool):
@@ -57,8 +58,36 @@ class TemplateTool(cherrypy.Tool):
         # print("template data: ", data)
         # print("template: ", template)
         renderer = self._engine.get_template('page/{0}.html'.format(template))
-
         return renderer.render(**data) if template and isinstance(data, dict) else data
+
+class AuthTool(cherrypy.Tool):
+    def __init__(self):
+        cherrypy.Tool.__init__(
+            self,
+            'before_handler',
+            self.auth_check,
+            priority=95
+        )
+
+    def auth_check(self, extra_requires=None):
+        print('checking auth...')
+        requires = cherrypy.request.config.get('auth.require', None)
+        if extra_requires is not None:
+            add_new = lambda x, y: list(set(x)|set(y))
+            requires = add_new(requires, extra_requires)
+        if requires is not None:
+            user = cherrypy.session.get('user', None)
+            if not user:
+                raise cherrypy.HTTPRedirect("/auth/login")
+            if len(requires) > 0:
+                user['groups'] = ['guest']
+                check_pass = lambda x, y : True if len(set(x)&set(y)) > 0 else False
+                ipass = check_pass(requires, user['groups'])
+                if not ipass:
+                    raise cherrypy.HTTPRedirect("/error/noauth")
+        site_stat, auth_menu = site_db.get_top_menu('system')
+        cherrypy.session['authmenu'] = auth_menu
+
 
 
 class AccessTool(cherrypy.Tool):
@@ -77,18 +106,21 @@ class AccessTool(cherrypy.Tool):
             raise cherrypy.HTTPRedirect("/error/noauth")
         auth_href = [h for c, h, g in auth_menu]
         cherrypy.session['authmenu'] = auth_menu
-        print(dir(cherrypy.request), cherrypy.request.path_info)
+        # print(dir(cherrypy.request), cherrypy.request.path_info)
         if cherrypy.request.path_info not in auth_href:
             raise cherrypy.HTTPRedirect("/error/noauth")
 
 
 def bootstrap():
+
     cherrypy.tools.template = TemplateTool()
-    cherrypy.tools.access = AccessTool()
+    # cherrypy.tools.access = AccessTool()
+    cherrypy.tools.auth = AuthTool()
 
     cherrypy.config.update(config.config)
 
-    import application.controller
+    from .controller.indexctl import Index
 
-    cherrypy.config.update({'error_page.default': controller.errorPage})
-    cherrypy.tree.mount(controller.Index(), '/', config.config)
+
+    # cherrypy.config.update({'error_page.default': controller.errorPage})
+    cherrypy.tree.mount(Index(), '/', config.config)

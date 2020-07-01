@@ -10,10 +10,12 @@ jaraco.collections==3.0.0
 jaraco.functools==3.0.1
 jaraco.text==3.2.0
 Jinja2==2.11.2
+ldap3==2.7
 MarkupSafe==1.1.1
 more-itertools==8.2.0
 msal==1.3.0
 portend==2.6
+pyasn1==0.4.8
 pycparser==2.20
 PyJWT==1.7.1
 pyodbc==4.0.30

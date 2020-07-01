@@ -82,7 +82,7 @@ class SqliteHandler(object):
                     (2, 'News', '/news/list', 'top_menu', 1, 2, None),
                     (3, 'Profile', '/user/profile', 'top_menu', 1, 3, None),
                     (4, 'Broken', '/error/broken', 'top_menu', 1, 4, None),
-                    (5, 'Logout', '/logout', 'top_menu', 1, 5, None),
+                    (5, 'Logout', '/auth/logout', 'top_menu', 1, 5, None),
                     (6, 'news-Show', '/news/show', 'end_point', 2, None, 2)
                 ])
             )
